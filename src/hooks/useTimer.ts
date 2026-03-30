@@ -85,32 +85,35 @@ export function useTimer(config: TimerConfig) {
     intervalRef.current = window.setInterval(() => {
       setRemainingSeconds(prev => {
         if (prev <= 1) {
-          clearTimer();
           const currentState = stateRef.current;
           const cfg = configRef.current;
 
           if (currentState === "running") {
-            setSessionCount(c => c + 1);
             setStreak(s => s + 1);
             cfg.onSessionComplete?.();
 
             if (cfg.mode === "pomodoro") {
-              // Check session count for long break
-              setSessionCount(prevCount => {
-                const isLong = prevCount % 4 === 0;
+              clearTimer();
+              setSessionCount(c => {
+                const next = c + 1;
+                const isLong = next % 4 === 0;
                 setTimeout(() => startBreak(isLong), 500);
-                return prevCount;
+                return next;
               });
             } else if (cfg.mode === "infinite") {
-              // Restart infinite timer
+              // Keep interval running, just reset the counter
+              setSessionCount(c => c + 1);
               setTotalSeconds(3600);
               return 3600;
             } else {
               // Free mode - go idle
+              clearTimer();
+              setSessionCount(c => c + 1);
               setState("idle");
             }
           } else {
             // Break completed
+            clearTimer();
             cfg.onBreakComplete?.();
             setState("idle");
             const secs = cfg.workMinutes * 60;
