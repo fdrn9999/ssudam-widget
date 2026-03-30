@@ -77,7 +77,11 @@ fn build_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
         ])
         .build()?;
 
+    let icon = app.default_window_icon().cloned()
+        .expect("앱 아이콘이 없습니다");
+
     let _tray = TrayIconBuilder::new()
+        .icon(icon)
         .menu(&menu)
         .tooltip("담타 위젯")
         .on_menu_event(move |app, event| {
