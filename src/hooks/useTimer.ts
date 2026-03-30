@@ -21,6 +21,7 @@ export function useTimer(config: TimerConfig) {
   const intervalRef = useRef<number | null>(null);
   const stateRef = useRef<TimerState>(state);
   const configRef = useRef(config);
+  const burnRateRef = useRef(1); // 1 = normal, 3 = holding (빨리 탐)
 
   // Keep refs in sync
   stateRef.current = state;
@@ -122,7 +123,7 @@ export function useTimer(config: TimerConfig) {
           }
           return 0;
         }
-        return prev - 1;
+        return Math.max(0, prev - burnRateRef.current);
       });
     }, 1000);
 
@@ -142,6 +143,10 @@ export function useTimer(config: TimerConfig) {
   const seconds = remainingSeconds % 60;
   const display = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
+  const setBurnRate = useCallback((rate: number) => {
+    burnRateRef.current = rate;
+  }, []);
+
   return {
     state,
     progress,
@@ -155,5 +160,6 @@ export function useTimer(config: TimerConfig) {
     toggle,
     reset,
     startBreak,
+    setBurnRate,
   };
 }

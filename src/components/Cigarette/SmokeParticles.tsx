@@ -6,7 +6,7 @@ interface SmokeParticlesProps {
 
 export function SmokeParticles({ particles }: SmokeParticlesProps) {
   return (
-    <div className="absolute bottom-full left-0 right-0 h-[200px] pointer-events-none overflow-hidden">
+    <div className="absolute bottom-full left-0 right-0 h-[250px] pointer-events-none overflow-visible">
       {particles.map(p => (
         <div
           key={p.id}
@@ -19,8 +19,10 @@ export function SmokeParticles({ particles }: SmokeParticlesProps) {
             backgroundColor: `rgba(${p.r}, ${p.g}, ${p.b}, ${p.opacity})`,
             animationDuration: `${p.duration}s`,
             animationDelay: `${p.delay}s`,
-            transform: `translateX(${p.drift}px)`,
-          }}
+            "--drift": `${p.drift}px`,
+            "--wobble": `${p.wobble}px`,
+            "--scale-end": `${p.scaleEnd}`,
+          } as React.CSSProperties}
         />
       ))}
     </div>

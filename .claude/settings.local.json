@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cargo --version)",
+      "Bash(npm --version)",
+      "Bash(rustc --version)",
+      "Bash(\"/c/Program Files/nodejs/node.exe\" --version)",
+      "Bash(\"/c/Program Files/nodejs/npm.cmd\" --version)",
+      "Bash(where cargo:*)",
+      "Bash(where rustc:*)",
+      "Bash(curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs)",
+      "Bash(sh -s -- -y)",
+      "Bash(export PATH=\"$HOME/.cargo/bin:$PATH\")",
+      "Bash(where node:*)",
+      "Bash(export PATH=\"$HOME/.cargo/bin:/c/Program Files/nodejs:$PATH\")",
+      "Bash(npm create:*)",
+      "Bash(cp -r \"D:/Users/Documents/damta-widget-temp/.\" \"D:/Users/Documents/damta-widget/\")",
+      "Bash(rm -rf \"D:/Users/Documents/damta-widget-temp\")",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
+      "Bash(npm install:*)",
+      "Bash(cargo check:*)",
+      "Bash(rustup show:*)",
+      "Bash(rustup target:*)",
+      "Bash(rustup toolchain:*)",
+      "Bash(rustup default:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$HOME/.cargo/bin:$PATH\")",
+      "Bash(npm ls:*)",
+      "Bash(cargo build:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:1420/)",
+      "Bash(grep -c \"flex\" dist/assets/*.css)",
+      "Bash(taskkill:*)",
+      "Bash(where magick:*)",
+      "Bash(npm list:*)",
+      "Bash(node generate-icon.mjs)",
+      "Bash(npx tauri:*)"
+    ]
+  }
+}

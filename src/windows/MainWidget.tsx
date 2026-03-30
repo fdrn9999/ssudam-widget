@@ -20,6 +20,7 @@ import {
 export function MainWidget() {
   const { settings } = useSettings();
   const [memoOpen, setMemoOpen] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
   const { particles: ashParticles, triggerFlick } = useAshEffect();
 
   const timer = useTimer({
@@ -56,9 +57,10 @@ export function MainWidget() {
 
   const isActive = timer.state === "running";
   const cigarette = useCigarette(timer.progress, isActive);
+  const showSmoke = (isActive && cigarette.isLit) || isHolding;
   const smokeParticles = useSmokeParticles(
-    isActive && cigarette.isLit,
-    settings.smokeAmount
+    showSmoke,
+    isHolding ? "high" : settings.smokeAmount
   );
 
   // Handle memo panel resize
@@ -80,7 +82,7 @@ export function MainWidget() {
   const handleFlickAsh = useCallback(() => {
     const hadAsh = cigarette.flickAsh();
     if (hadAsh) {
-      triggerFlick();
+      triggerFlick(cigarette.ashHeight);
     }
   }, [cigarette, triggerFlick]);
 
@@ -146,8 +148,8 @@ export function MainWidget() {
 
   return (
     <div
-      className="flex h-screen select-none"
-      style={{ opacity: settings.widgetOpacity }}
+      className="flex h-screen select-none rounded-xl overflow-hidden"
+      style={{ opacity: settings.widgetOpacity, background: "rgba(17,17,17,0.92)" }}
     >
       {/* Memo Panel */}
       {memoOpen && (
@@ -158,35 +160,53 @@ export function MainWidget() {
 
       {/* Cigarette Area */}
       <div className="flex flex-col items-center justify-end w-[100px] h-full relative">
+        {/* Drag handle — 창 이동 영역 */}
+        <div
+          className="absolute top-0 left-0 right-0 h-8 cursor-grab z-20 flex items-center justify-center"
+          onMouseDown={() => getCurrentWindow().startDragging().catch(() => {})}
+        >
+          <div className="w-6 h-1 rounded-full bg-gray-600 opacity-40" />
+        </div>
+
         {/* Memo bubble toggle */}
         <button
           onClick={() => setMemoOpen(!memoOpen)}
-          className="absolute top-2 right-2 text-lg opacity-50 hover:opacity-100 transition-opacity z-10"
+          className="absolute top-8 right-2 text-lg opacity-50 hover:opacity-100 transition-opacity z-10"
           title="메모 열기/닫기"
         >
           💭
         </button>
 
-        {/* Cigarette */}
-        <div
-          className="relative cursor-pointer"
-          onClick={handleCigaretteClick}
+        {/* Settings button */}
+        <button
+          onClick={() => invoke("open_settings")}
+          className="absolute top-8 left-1 text-sm opacity-30 hover:opacity-80 transition-opacity z-10"
+          title="설정"
         >
+          ⚙️
+        </button>
+
+        {/* Cigarette */}
+        <div className="relative">
           <AshEffect particles={ashParticles} />
           <Cigarette
             ashHeight={cigarette.ashHeight}
             paperHeight={cigarette.paperHeight}
             isLit={cigarette.isLit}
             isActive={isActive}
+            showSmoke={showSmoke}
             skin={settings.cigaretteSkin}
             smokeParticles={smokeParticles}
             emberGlow={settings.emberGlow}
+            onBodyClick={handleCigaretteClick}
             onFlickAsh={handleFlickAsh}
+            onHoldStart={() => { setIsHolding(true); timer.setBurnRate(3); }}
+            onHoldEnd={() => { setIsHolding(false); timer.setBurnRate(1); }}
           />
         </div>
 
         {/* Timer display */}
-        <TimerDisplay display={timer.display} state={timer.state} />
+        <TimerDisplay display={timer.display} state={timer.state} isBurning={isHolding} />
 
         {/* Session counter */}
         <div className="text-[8px] text-gray-600 mb-2">
